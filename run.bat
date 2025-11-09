@@ -1,2 +1,1 @@
-pip install pyautogui
-pip install keyboard
+python main.py
