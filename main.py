@@ -27,7 +27,7 @@ def keystrokerfunc(args):
 
     print(f"Starting in {delay_before_start} seconds. Focus the window. \nPress 'c' to stop.")
 
-    # Countdown
+    # Countdown before typing starts
     for sec in range(int(delay_before_start), 0, -1):
         if stopwhenkeyboard and keyboard.is_pressed('c'):
             print("\nStopped before start (keyboard input detected).")
@@ -49,17 +49,24 @@ def keystrokerfunc(args):
                 print("\nStopped (keyboard input detected).")
                 return
 
-            if line[i] == " ":
+            if line[i] in (" ", "\t"):
                 count = 1
-                while i + count < len(line) and line[i + count] == " ":
+                ch = line[i]
+                while i + count < len(line) and line[i + count] == ch:
                     count += 1
-                num_tabs = count // tab_width
-                remainder = count % tab_width
 
-                for _ in range(num_tabs):
-                    pyautogui.press("tab")
-                if remainder > 0:
-                    pyautogui.write(" " * remainder, interval=delay_between_keys)
+                if ch == "\t":
+                    # Real tabs -> one Tab key each
+                    for _ in range(count):
+                        pyautogui.press("tab")
+                else:
+                    # Spaces -> convert based on tab width
+                    num_tabs = count // tab_width
+                    remainder = count % tab_width
+                    for _ in range(num_tabs):
+                        pyautogui.press("tab")
+                    if remainder > 0:
+                        pyautogui.write(" " * remainder, interval=delay_between_keys)
 
                 i += count
             else:
